@@ -10,10 +10,10 @@ function UI() {}
 // Add book to list
 UI.prototype.addBookToList = function (book) {
 	const list = document.getElementById("book-list");
-	// create tr element
+	// Create tr element
 	const row = document.createElement("tr");
 
-	// insert cols
+	// Insert cols
 	row.innerHTML = `
 	<td>${book.title}</td>
 	<td>${book.author}</td>
@@ -21,6 +21,25 @@ UI.prototype.addBookToList = function (book) {
 	<td><button class="delete">x</button></td>`;
 
 	list.appendChild(row);
+};
+
+// Shoe alert
+UI.prototype.showAlert = function (message, classNAme) {
+	// Create div
+	const div = document.createElement("div");
+	// Add classes
+	div.className = `alert ${classNAme}`;
+	// Add text
+	div.appendChild(document.createTextNode(message));
+	// Get parent
+	const container = document.querySelector(".container");
+	const form = document.querySelector("#book-form");
+	// Insert alert
+	container.insertBefore(div, form);
+	// Timeout after 3 seconds
+	setTimeout(function () {
+		document.querySelector(".alert").remove();
+	}, 3000);
 };
 
 // Clear fields
@@ -34,20 +53,29 @@ UI.prototype.clearFields = function () {
 document.getElementById("book-form").addEventListener("submit", function (e) {
 	e.preventDefault();
 
-	// get form values
+	// Get form values
 	const title = document.getElementById("title").value,
 		author = document.getElementById("author").value,
 		isbn = document.getElementById("isbn").value;
 
-	// instantiate book
+	// Instantiate book
 	const book = new Book(title, author, isbn);
 
-	// instantiate UI
+	// Instantiate UI
 	const ui = new UI();
 
-	// add book to list
-	ui.addBookToList(book);
+	// Validate
+	if (title === "" || author === "" || isbn === "") {
+		// Error alert
+		ui.showAlert("Please fill in all fields", "error");
+	} else {
+		// Add book to list
+		ui.addBookToList(book);
 
-	// clear fields
-	ui.clearFields();
+		// Show success
+		ui.showAlert("Book added!", "success");
+
+		// Clear fields
+		ui.clearFields();
+	}
 });
